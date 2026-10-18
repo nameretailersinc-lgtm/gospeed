@@ -127,7 +127,7 @@ jobs:
         shell: bash
         run: |
           docker run --detach --name gospeed-smoke --publish 127.0.0.1:3108:3000 "$IMAGE:sha-$GITHUB_SHA"
-          curl --fail --silent --show-error --retry 25 --retry-connrefused --retry-delay 2 --retry-max-time 90 --output /dev/null http://127.0.0.1:3108/
+          curl --fail --silent --show-error --connect-timeout 3 --max-time 5 --retry 25 --retry-all-errors --retry-delay 2 --retry-max-time 90 --output /dev/null http://127.0.0.1:3108/
           curl --fail --silent --show-error --output /dev/null http://127.0.0.1:3108/icon.svg
           curl --fail --silent --show-error --output /dev/null http://127.0.0.1:3108/favicon.ico
           curl --fail --silent --show-error --output /dev/null http://127.0.0.1:3108/apple-icon.png
