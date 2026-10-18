@@ -7,6 +7,7 @@ VPS target supplied by the user: `5.189.158.75`.
 
 ## Checks and container release
 
+
 1. Node 22 installs the lockfile with `npm ci`, then runs lint, TypeScript, unit tests and the production build.
 2. Three independent browser jobs test the same production-build artifact at desktop, tablet and mobile sizes. Browser reports, screenshots and traces are retained as workflow artifacts.
 3. After every check passes on `main`, the Docker image is built and smoke-tested for the homepage and icon assets. The tested image is published as `ghcr.io/nameretailersinc-lgtm/gospeed:sha-<full-commit-sha>` and `:latest` using the workflow's built-in `GITHUB_TOKEN`.
