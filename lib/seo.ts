@@ -1,0 +1,6 @@
+import type {Metadata} from 'next';
+export const SITE='https://gospeedraceway.com';
+export const UPDATED='2026-10-18';
+export function metadata(title:string,description:string,path:string):Metadata{return {title:{absolute:`${title} | GoSpeedRaceway`},description,alternates:{canonical:SITE+path},openGraph:{type:'website',url:SITE+path,title,description,siteName:'GoSpeedRaceway',locale:'en_US',images:[{url:'/opengraph-image',width:1200,height:630,alt:'GoSpeedRaceway — Motorsport engineering, made useful'}]},twitter:{card:'summary_large_image',title,description,images:['/opengraph-image']}};}
+export const breadcrumbSchema=(items:{name:string;path:string}[])=>({'@context':'https://schema.org','@type':'BreadcrumbList',itemListElement:items.map((item,i)=>({'@type':'ListItem',position:i+1,name:item.name,item:SITE+item.path}))});
+export const softwareSchema=(name:string,description:string,path:string)=>({'@context':'https://schema.org','@type':'WebApplication',name,description,url:SITE+path,applicationCategory:'UtilitiesApplication',operatingSystem:'Any modern web browser',browserRequirements:'JavaScript enabled for interactive calculations',isAccessibleForFree:true,offers:{'@type':'Offer',price:'0',priceCurrency:'USD'}});

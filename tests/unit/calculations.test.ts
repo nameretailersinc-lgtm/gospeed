@@ -1,0 +1,34 @@
+import {describe,it,expect} from 'vitest';
+import {tools} from '@/data/tools';
+import {calculate,defaults,validate,toDisplay,fromDisplay,formatNumber} from '@/lib/engine';
+import {UNITS,ratio,speed,chainLength,pitchDiameter,torquePower,quarterMileET,trapSpeed,horsepowerFromET,densityAltitude,tireDiameter,statistics} from '@/lib/calculations';
+describe('independent calculation references',()=>{
+ it('12/60 gives 5:1 and 720 wheel rpm at 3600 engine rpm',()=>{expect(ratio(12,60)).toBe(5);expect(3600/ratio(12,60)).toBe(720);});
+ it('one-meter circumference at 60 wheel rpm means 1 m/s',()=>{expect(speed(60,1/Math.PI,1)).toBeCloseTo(1,12);expect(speed(300,1/Math.PI,5)).toBeCloseTo(1,12);});
+ it('equal 20T sprockets at 20 pitches centers take 60 links',()=>{const result=chainLength(0.0127,20,20,0.254);expect(result.links).toBeCloseTo(60,10);expect(result.evenLinks).toBe(60);expect(result.length).toBeCloseTo(0.762,10);expect(result.adjustedCenter).toBeCloseTo(0.254,10);});
+ it('rounds up to even links and adjusts center distance',()=>{const result=chainLength(0.0127,20,20,0.26);expect(result.evenLinks).toBe(62);expect(result.adjustedCenter).toBeCloseTo(0.2667,8);expect(result.adjustedCenter).toBeGreaterThan(0.26);});
+ it('a six-tooth regular hexagon has pitch diameter twice its pitch',()=>{expect(pitchDiameter(0.01,6)).toBeCloseTo(0.02,12);});
+ it('12T half-inch pitch sprocket matches a 15 degree chord',()=>{expect(pitchDiameter(0.0127,12)/UNITS.inch).toBeCloseTo(1.93185165,7);});
+ it('1 Nm at 60 rpm delivers 2π W',()=>{expect(torquePower(1,60)*1000).toBeCloseTo(6.28318530718,10);});
+ it('400 lbf-ft at the mechanical hp crossover gives 400 hp',()=>{expect(torquePower(400*UNITS.lbfFt,33000/(2*Math.PI))/UNITS.hp).toBeCloseTo(400,9);});
+ it('a cube-root model with weight/power exactly eight gives 11.65 s',()=>{expect(quarterMileET(3200*UNITS.lb,400*UNITS.hp)).toBeCloseTo(11.65,12);expect(trapSpeed(3200*UNITS.lb,400*UNITS.hp)/UNITS.mph).toBeCloseTo(117,12);expect(horsepowerFromET(3200*UNITS.lb,11.65)/UNITS.hp).toBeCloseTo(400,10);});
+ it('returns approximately ISA sea-level density in standard dry conditions',()=>{const a=densityAltitude(15,1013.25,0);expect(a.density).toBeCloseTo(1.225,4);expect(Math.abs(a.altitude)).toBeLessThan(1);});
+ it('warm, humid, or lower-pressure air has lower density',()=>{expect(densityAltitude(35,1013.25,0).density).toBeLessThan(densityAltitude(15,1013.25,0).density);expect(densityAltitude(25,1013.25,100).density).toBeLessThan(densityAltitude(25,1013.25,0).density);expect(densityAltitude(25,850,50).altitude).toBeGreaterThan(densityAltitude(25,1013.25,50).altitude);});
+ it('205/55R16 is 631.9 mm nominal diameter',()=>{expect(tireDiameter(205,55,16)).toBeCloseTo(0.6319,12);});
+ it('three measured passes have a known mean, spread and population SD',()=>{const s=statistics([12.1,12.12,12.08]);expect(s.mean).toBeCloseTo(12.1,12);expect(s.spread).toBeCloseTo(0.04,12);expect(s.sd).toBeCloseTo(0.01632993162,10);});
+ it('half-g 0–60 uses kinematics and converts 60 MPH exactly',()=>{const tool=tools.find(t=>t.kind==='acceleration')!;const c=calculate(tool,{acceleration:0.5},'metric');expect(c.results[0].value).toBeCloseTo(5.470245,5);expect(c.results[1].value).toBeCloseTo(73.363,2);});
+ it('12/60 to 12/66 changes reduction +10% and speed −9.09%',()=>{const t=tools.find(t=>t.kind==='sprocket')!;const c=calculate(t,defaults(t));expect(c.results[2].value).toBeCloseTo(10,12);expect(c.results[3].value).toBeCloseTo(-9.09090909,7);});
+ it('multiplies primary, selected gear, jackshafts and operating converter ratios',()=>{const t=tools[0];const v={...defaults(t),jackIn:18,jackOut:12,jack2In:20,jack2Out:10,converter:2};expect(calculate(t,v).results[0].value).toBe(30);const m=tools.find(t=>t.category==='motorcycle'&&t.kind==='gearing')!;expect(calculate(m,{...defaults(m),primary:2,gear:1.5}).results[0].value).toBe(9);});
+ it('restores effective gearing for larger tires in the correct direction',()=>{const t=tools.find(t=>t.kind==='tire-gearing')!;const c=calculate(t,{oldDiameter:26*UNITS.inch,newDiameter:30*UNITS.inch,ratio:4.1});expect(c.results[0].value).toBeCloseTo(4.73076923,7);});
+ it('uses pitch advance for average chain speed',()=>{const t=tools.find(t=>t.kind==='chain-speed')!;const c=calculate(t,{pitch:0.0127,front:12,rear:60,rpm:600});expect(c.results[0].value).toBeCloseTo(1.524,12);expect(c.results[2].value).toBe(120);});
+ it('rejects non-numeric, unknown and missing shared values',()=>{const t=tools[0];expect(validate(t,{...defaults(t),extra:1}).valid).toBe(false);expect(validate(t,{...defaults(t),rpm:'hello' as unknown as number}).valid).toBe(false);expect(validate(t,{}).valid).toBe(false);});
+ it('detects overlapping sprocket pitch circles',()=>{const t=tools.find(t=>t.kind==='chain')!;expect(validate(t,{...defaults(t),center:0.02}).valid).toBe(false);});
+ it('formats units with finite values and no negative zero',()=>{expect(formatNumber(-0)).toBe('0.00');expect(formatNumber(12345.678)).toBe('12,345.68');});
+});
+describe.each(tools)('$id: $name',tool=>{
+ it('calculates finite, explicitly unit-labeled defaults',()=>{expect(validate(tool,defaults(tool)).valid).toBe(true);const c=calculate(tool,defaults(tool));expect(c.results.length).toBeGreaterThan(0);for(const r of c.results){expect(Number.isFinite(r.value)).toBe(true);expect(r.unit.length).toBeGreaterThan(0);}expect(c.results.some(r=>r.primary)).toBe(true);});
+ it('is numerically stable across unit display conversion',()=>{const v=defaults(tool);for(const f of tool.fields){for(const u of ['metric','imperial'] as const)expect(fromDisplay(toDisplay(v[f.key],f,u),f,u)).toBeCloseTo(v[f.key],9);}});
+ it('validates every field outside its supported range',()=>{for(const f of tool.fields){expect(validate(tool,{...defaults(tool),[f.key]:f.min-1}).valid).toBe(false);expect(validate(tool,{...defaults(tool),[f.key]:f.max+1}).valid).toBe(false);expect(validate(tool,{...defaults(tool),[f.key]:NaN}).valid).toBe(false);expect(validate(tool,{...defaults(tool),[f.key]:Infinity}).valid).toBe(false);if(f.integer)expect(validate(tool,{...defaults(tool),[f.key]:f.default+0.5}).valid).toBe(false);}});
+ it('handles zero, negative values and valid boundaries deliberately',()=>{for(const f of tool.fields){const base=defaults(tool);expect(validate(tool,{...base,[f.key]:-1}).valid).toBe(f.min<=-1);const zero={...base,[f.key]:0};if(f.min>0)expect(validate(tool,zero).valid).toBe(false);else if(validate(tool,zero).valid)expect(()=>calculate(tool,zero)).not.toThrow();for(const bound of [f.min,f.max]){const v={...base,[f.key]:bound};if(validate(tool,v).valid)for(const r of calculate(tool,v).results)expect(Number.isFinite(r.value)).toBe(true);}}});
+ it('throws rather than publishing an invalid result',()=>{const f=tool.fields[0];expect(()=>calculate(tool,{...defaults(tool),[f.key]:NaN})).toThrow();});
+});

@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+.env*
+!.env.example
+playwright-report/
+test-results/
+coverage/
+*.tsbuildinfo
+.npm-cache/
+docs/evidence/*
+!docs/evidence/guide-content-inventory.json
+production-build.tar.gz
+*.pem
+*.key
+.tools/

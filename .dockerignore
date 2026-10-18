@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env*
+test-results
+playwright-report
+docs/evidence
+.github
+production-build.tar.gz
+*.pem
+*.key
+.tools

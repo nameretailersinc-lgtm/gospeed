@@ -1,0 +1,6 @@
+﻿import Image from '@/components/site-image';
+import {metadata} from '@/lib/seo';
+import {Breadcrumbs} from '@/components/breadcrumbs';
+import {GuideLibrary} from '@/components/guide-library';
+export const generateMetadata=()=>metadata('Motorsport Engineering Guides','Understand gearing, kart speed, jackshafts, motorcycle sprockets, drag-racing estimates, tires and chain drives with practical worked examples.','/guides');
+export default async function GuidesPage({searchParams}:{searchParams:Promise<{page?:string}>}){const params=await searchParams;const page=Number(params.page);return <div className="photo-guide-page"><section className="photo-page-hero guides-photo-hero"><Image src="/guide-listing/hero-racing-car.jpg" alt="" fill priority sizes="100vw"/><div className="hero-shade"/><div className="container"><Breadcrumbs items={[{name:'Home',path:'/'},{name:'Engineering guides',path:'/guides'}]}/><div className="photo-page-heading"><h1>The engineering{' '}<br/>behind <span>your setup.</span></h1><p>Practical guides, technical explanations and real-world insights to help you understand your setup and make informed changes.</p></div></div></section><div className="container guide-library-main"><GuideLibrary initialPage={Number.isInteger(page)&&page>0?page:1}/></div></div>;}

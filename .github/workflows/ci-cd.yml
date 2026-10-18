@@ -1,0 +1,204 @@
+name: CI / CD
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy to the configured VPS after all checks pass
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gospeed-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+  NEXT_PUBLIC_CONTACT_EMAIL: ${{ vars.NEXT_PUBLIC_CONTACT_EMAIL || 'info@nameretailer.com' }}
+
+jobs:
+  checks:
+    name: Lint, types, unit tests and production build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Package the tested standalone build
+        run: tar -czf production-build.tar.gz .next/standalone .next/static
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: production-build
+          path: production-build.tar.gz
+          retention-days: 7
+          if-no-files-found: error
+
+  browser:
+    name: Browser tests (${{ matrix.project }})
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [desktop, tablet, mobile]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: production-build
+      - run: tar -xzf production-build.tar.gz
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e -- --project=${{ matrix.project }} --workers=2
+      - name: Retain browser reports, screenshots and traces
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: browser-results-${{ matrix.project }}
+          path: |
+            playwright-report/
+            test-results/
+            docs/evidence/
+          retention-days: 14
+          if-no-files-found: warn
+
+  container:
+    name: Build, smoke-test and publish container
+    needs: [checks, browser]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.image.outputs.name }}:sha-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Set the lowercase registry image name
+        id: image
+        shell: bash
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          echo "name=$image" >> "$GITHUB_OUTPUT"
+          echo "IMAGE=$image" >> "$GITHUB_ENV"
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          load: true
+          push: false
+          provenance: false
+          build-args: NEXT_PUBLIC_CONTACT_EMAIL=${{ env.NEXT_PUBLIC_CONTACT_EMAIL }}
+          tags: |
+            ${{ steps.image.outputs.name }}:sha-${{ github.sha }}
+            ${{ steps.image.outputs.name }}:latest
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Smoke-test the actual runtime image
+        shell: bash
+        run: |
+          docker run --detach --name gospeed-smoke --publish 127.0.0.1:3108:3000 "$IMAGE:sha-$GITHUB_SHA"
+          curl --fail --silent --show-error --retry 25 --retry-connrefused --retry-delay 2 --retry-max-time 90 --output /dev/null http://127.0.0.1:3108/
+          curl --fail --silent --show-error --output /dev/null http://127.0.0.1:3108/icon.svg
+          curl --fail --silent --show-error --output /dev/null http://127.0.0.1:3108/favicon.ico
+          curl --fail --silent --show-error --output /dev/null http://127.0.0.1:3108/apple-icon.png
+      - name: Show container logs on failure
+        if: failure()
+        run: docker logs gospeed-smoke || true
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish the tested image
+        shell: bash
+        run: |
+          docker push "$IMAGE:sha-$GITHUB_SHA"
+          docker push "$IMAGE:latest"
+      - name: Remove the smoke-test container
+        if: always()
+        run: docker rm --force gospeed-smoke || true
+
+  deploy:
+    name: Deploy to VPS
+    needs: container
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (vars.ENABLE_VPS_DEPLOY == 'true' ||
+      (github.event_name == 'workflow_dispatch' && inputs.deploy))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    permissions:
+      contents: read
+      packages: read
+    env:
+      VPS_HOST: ${{ vars.VPS_HOST || '66.29.148.167' }}
+      VPS_USER: ${{ vars.VPS_USER }}
+      VPS_SSH_PORT: ${{ vars.VPS_SSH_PORT || '22' }}
+      VPS_APP_PORT: ${{ vars.VPS_APP_PORT || '3001' }}
+      IMAGE: ${{ needs.container.outputs.image }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Configure SSH with a pinned server identity
+        shell: bash
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          [[ "$VPS_HOST" =~ ^[a-zA-Z0-9.-]+$ ]] || { echo 'Invalid VPS_HOST'; exit 1; }
+          [[ "$VPS_USER" =~ ^[a-zA-Z_][a-zA-Z0-9_-]*$ ]] || { echo 'Set VPS_USER to the SSH deployment account'; exit 1; }
+          [[ "$VPS_SSH_PORT" =~ ^[0-9]+$ && "$VPS_APP_PORT" =~ ^[0-9]+$ ]] || { echo 'Invalid port'; exit 1; }
+          [[ -n "$VPS_SSH_KEY" && -n "$VPS_KNOWN_HOSTS" ]] || { echo 'Configure VPS_SSH_KEY and verified VPS_KNOWN_HOSTS secrets'; exit 1; }
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$VPS_SSH_KEY" > "$HOME/.ssh/gospeed"
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/gospeed" "$HOME/.ssh/known_hosts"
+      - name: Copy the application deployment files
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -i "$HOME/.ssh/gospeed" -p "$VPS_SSH_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" 'mkdir -p "$HOME/gospeed"'
+          scp -i "$HOME/.ssh/gospeed" -P "$VPS_SSH_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes deploy/compose.yml deploy/deploy.sh "$VPS_USER@$VPS_HOST:gospeed/"
+      - name: Pull, deploy and health-check with rollback
+        shell: bash
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$GHCR_TOKEN" | ssh -i "$HOME/.ssh/gospeed" -p "$VPS_SSH_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" "bash \"\$HOME/gospeed/deploy.sh\" '$IMAGE' '$VPS_APP_PORT' '$GITHUB_ACTOR'"
+      - name: Remove the temporary SSH key
+        if: always()
+        run: rm -f "$HOME/.ssh/gospeed"

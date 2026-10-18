@@ -1,0 +1,58 @@
+{
+  "mode": "built-in image_gen",
+  "destination": "public/images/hd",
+  "assets": [
+    {
+      "file": "kart-hero.png",
+      "prompt": "Use case: ads-marketing. High-resolution blue racing go-kart and helmeted adult on a closed circuit at sunset; kart entirely in the right half, dark left space for HTML headings, sharp natural mechanical detail, navy/blue/warm palette; no lettering, logos, watermark or UI."
+    },
+    {
+      "file": "car-hero.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution motorsport website image replacing a tiny blurry mockup crop. A blue GT racing coupe with subtle yellow accents on a closed racing circuit at blue hour, low front three-quarter camera, car sharp and fully visible on the RIGHT HALF; dark track and grandstands left for HTML headings. Wide cinematic landscape hero 2560x1440 or larger. Crisp detailed bodywork, tires, headlights and track surface. Sharp original standalone artwork, high detail. No typography, logos, lettering, watermark, charts, borders, webpage UI or collage."
+    },
+    {
+      "file": "chain-drive.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution motorsport website image replacing a tiny blurry mockup crop. Precision roller-chain drive with a small steel sprocket at left, large steel sprocket at right, and one mechanically plausible continuous chain wrapped around both; studio macro product photograph, dark navy background, cool blue highlights, crisp individual rollers and teeth, both sprockets and entire chain fully visible. Landscape 2048x1152. Illustration only, no measurements. Sharp original standalone artwork, high detail. No typography, logos, lettering, watermark, charts, borders, webpage UI or collage."
+    },
+    {
+      "file": "drivetrain.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution motorsport website image replacing a tiny blurry mockup crop. Close-up engineering product photography of a high-performance automotive drivetrain assembly, polished machined steel gears and shafts, subtle blue-anodized hubs, dark navy workshop background, razor-sharp metal teeth and textures, natural mechanical construction, controlled cool lighting. Landscape 2048x1152. Full assembly fits inside frame. Sharp original standalone artwork, high detail. No typography, logos, lettering, watermark, charts, borders, webpage UI or collage."
+    },
+    {
+      "file": "motorcycle.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution motorsport website image replacing a tiny blurry mockup crop. Blue and black sport motorcycle with helmeted adult rider on a closed racetrack, low front three-quarter angle, crisp motorcycle detail and tire texture, blue-hour lighting, realistic motorsport editorial photography. Entire motorcycle fits in right two thirds with dark track left. Landscape 2048x1152. Sharp original standalone artwork, high detail. No typography, logos, lettering, watermark, charts, borders, webpage UI or collage."
+    },
+    {
+      "file": "tires.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution original website image replacing a blurry thumbnail crop. Three black performance road tires with sharply defined tread, standing in a dark navy automotive studio, one angled to show tread, one on an alloy wheel. Cool blue rim light, realistic rubber texture, complete tires visible and centered. Wide landscape 2048x1152. Sharp subject, natural materials. No overlay text, typography, logos, watermark, borders, UI, collage or contact sheet."
+    },
+    {
+      "file": "rpm-gauge.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution original website image replacing a blurry thumbnail crop. High-end analog automotive tachometer, precision macro product photograph, crisp white tick marks and simple legible standard numbers from 0 to 8, luminous red needle around 5, dark dial, subtle blue edge light and red high-RPM zone. No branding or dashboard warning text. Wide landscape 2048x1152. Sharp subject, natural materials. No overlay text, typography, logos, watermark, borders, UI, collage or contact sheet."
+    },
+    {
+      "file": "engineering-workbench.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution original website image replacing a blurry thumbnail crop. Motorsport engineering workbench, open laptop displaying an intricate unlabeled CAD model of a gear assembly, caliper and small machined parts beside it, subtle blue lighting, sharp metal and keyboard details, professional realistic editorial photograph. Screen can show geometric lines only, no letters or text. Wide landscape 2048x1152. Sharp subject, natural materials. No overlay text, typography, logos, watermark, borders, UI, collage or contact sheet."
+    },
+    {
+      "file": "dirt-bike.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution original website image replacing a blurry thumbnail crop. Blue off-road motorcycle with a helmeted adult rider on a closed dirt motocross circuit, warm evening side light, crisp bike and tire texture, natural airborne dust in background only, full motorcycle visible. Professional editorial motorsport photography, detailed realistic mechanics. Landscape 2048x1152. Sharp subject, natural materials. No overlay text, typography, logos, watermark, borders, UI, collage or contact sheet."
+    },
+    {
+      "file": "mini-bike.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution original motorsport website asset. A compact blue minibike with a small horizontal gasoline engine, visible simple chain drive, wide small tires and low tubular frame. Parked upright in a clean dark automotive workshop; no rider. Full bike visible. Sharp product photography, blue accent lighting and crisp engine and chain details. Wide landscape 2048x1152. No logos, text overlays, watermarks, borders, webpage UI, collage or mockup. Detailed standalone image, not an enlargement of a screenshot."
+    },
+    {
+      "file": "drag-racing.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution original motorsport website asset. Dark blue classic muscle car on a closed drag strip at sunset, front three-quarter low camera, timing-light tower in background with no legible labels. Car sharply focused, realistic tires and metal, entire vehicle visible in right two-thirds, left track darker for page copy. Wide landscape 2560x1440. No logos, text overlays, watermarks, borders, webpage UI, collage or mockup. Detailed standalone image, not an enlargement of a screenshot."
+    },
+    {
+      "file": "kart-rear.png",
+      "prompt": "Use case: photorealistic-natural. Asset type: high-resolution original motorsport website asset. Blue go-kart driven by helmeted adult on a closed racetrack at sunset, rear three-quarter angle, fully visible kart in right half, sharp engine and tires, dark track extending across left half for HTML footer content. Crisp professional motorsport photography, navy and blue palette with warm distant sky. Wide panorama 2560x1024. No logos, text overlays, watermarks, borders, webpage UI, collage or mockup. Detailed standalone image, not an enlargement of a screenshot."
+    },
+    {
+      "file": "engineering-blueprint.png",
+      "prompt": "Use case: stylized-concept. Asset type: high-resolution original motorsport website asset. Elegant dark-navy technical illustration of a generic motorsport drivetrain with interconnected gears, shafts and chassis framework in fine luminous blue wireframe lines, isometric view. Main schematic on right half, subtle technical grid across background. Crisp fine linework, visual texture only, no labels, letters, dimensions or numerical claims. Landscape 2048x1152. No logos, text overlays, watermarks, borders, webpage UI, collage or mockup. Detailed standalone image, not an enlargement of a screenshot."
+    }
+  ]
+}

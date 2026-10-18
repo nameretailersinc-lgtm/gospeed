@@ -1,0 +1,21 @@
+/* Self-hosted fonts, preloaded with Next.js metric-adjusted fallbacks. */
+.table-scroll:focus-visible,.guide-table-scroll:focus-visible{outline:2px solid #327df2;outline-offset:4px}
+body,input,select,textarea,button{font-family:var(--font-body),sans-serif;font-synthesis:none}
+body{font-weight:400}button,input,select,textarea{font-weight:400}
+h1,h2,h3,h4,h5,h6{font-family:var(--font-heading),sans-serif;font-weight:700;letter-spacing:0;line-height:1.12}
+h1{font-weight:700}h3,h4,h5,h6{font-weight:600}
+strong,b,label,summary,th,.button,.header-tool-button,.mega-tool-item strong,.mega-category-label strong,.eyebrow{font-weight:500}
+.race-brand{font-family:Arial,sans-serif;font-weight:900;letter-spacing:-1px}.race-brand small{font-family:var(--font-body),sans-serif;font-weight:500}
+.guide-hero-copy h1,.photo-hero h1,.photo-page-heading h1,.tool-photo-hero .photo-page-heading h1{font-weight:700;letter-spacing:0}
+.result-item>strong,.race-calculator .result-item>strong,.race-calculator .result-item.primary-result>strong{font-family:var(--font-stats),sans-serif;font-weight:700;letter-spacing:0;font-variant-numeric:tabular-nums lining-nums}
+.result-item>strong{font-size:27px}.race-calculator .result-item>strong{font-size:29px}.race-calculator .result-item.primary-result>strong{font-size:33px}
+.result-item>strong>small,.race-calculator .result-item>strong>small{font-family:var(--font-body),sans-serif;font-weight:400;letter-spacing:0}
+table,table th,table td,.guide-example-values dd{font-family:var(--font-stats),sans-serif;font-variant-numeric:tabular-nums lining-nums;font-weight:500}
+.formula-box code,.guide-power-formula code{font-family:var(--font-body),sans-serif;font-variant-numeric:tabular-nums}
+table th{font-weight:600}.input-shell>input,.race-calculator .input-shell>input,.reference-controls input{font-family:var(--font-body),sans-serif;font-weight:400;font-size:16px;letter-spacing:0;font-variant-numeric:tabular-nums}.guide-section-heading>span{font-family:var(--font-stats),sans-serif;font-variant-numeric:tabular-nums;font-weight:600;font-size:18px}
+.guide-detail-body .guide-section-heading h2{font-weight:700}.mega-tools-heading h2,.mega-feature-card h2{font-weight:700}.guide-reading a,.resource-dropdown strong{font-weight:500}
+.reference-detail-content{max-width:920px}.reference-detail-content p{font-size:15px;line-height:1.85}.reference-detail-content .faq-item summary{font-size:15px;line-height:1.6}.reference-detail-content .faq-item p{font-size:14px}.reference-detail-content .review-note{font-size:12px}
+@media(max-width:700px){.race-calculator .result-item>strong{font-size:26px}.race-calculator .result-item.primary-result>strong{font-size:30px}.reference-detail-content p{font-size:14px}}
+
+.photo-hero-stats strong,.directory-stat strong,.directory-hero-stats strong,.circuit-metrics strong,.big-ratio,.guide-example-values dd{font-family:var(--font-stats),sans-serif;font-weight:600;font-variant-numeric:tabular-nums lining-nums}
+.guide-detail-body .guide-section-heading h2{font-size:23px}.mega-tools-heading h2{font-size:19px}.mega-feature-card h2{font-size:20px}.guide-sidebar-panel h2{font-size:16px}.guide-limit-cards h3{font-size:15px}

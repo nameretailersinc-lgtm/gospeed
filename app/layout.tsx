@@ -1,0 +1,23 @@
+import type {Metadata,Viewport} from 'next';
+import localFont from 'next/font/local';
+import {Header} from '@/components/header';
+import {Footer} from '@/components/footer';
+import {SITE} from '@/lib/seo';
+import './globals.css';
+import './racing.css';
+import './typography.css';
+import './directory.css';
+import './methodology.css';
+import './mega-menu.css';
+import './guide-detail.css';
+import './font-system.css';
+import './home-cards.css';
+import './reference-detail.css';
+import './finder.css';
+import './guide-browser.css';
+const inter=localFont({src:[{path:'../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2',weight:'100 900'}],variable:'--font-body',display:'swap',preload:true});
+const sora=localFont({src:[{path:'../node_modules/@fontsource/sora/files/sora-latin-600-normal.woff2',weight:'600'},{path:'../node_modules/@fontsource/sora/files/sora-latin-700-normal.woff2',weight:'700'}],variable:'--font-heading',display:'swap',preload:true});
+const rajdhani=localFont({src:[{path:'../node_modules/@fontsource/rajdhani/files/rajdhani-latin-500-normal.woff2',weight:'500'},{path:'../node_modules/@fontsource/rajdhani/files/rajdhani-latin-600-normal.woff2',weight:'600'},{path:'../node_modules/@fontsource/rajdhani/files/rajdhani-latin-700-normal.woff2',weight:'700'}],variable:'--font-stats',display:'swap',preload:true});
+export const metadata:Metadata={metadataBase:new URL(SITE),title:{default:'Racing Calculators & Motorsport Performance Tools | GoSpeedRaceway',template:'%s | GoSpeedRaceway'},description:'Free motorsport calculators for go-karts, mini bikes, motorcycles, drivetrains and drag racing. Transparent formulas, clear assumptions and useful engineering guides.',robots:{index:true,follow:true},applicationName:'GoSpeedRaceway',icons:{icon:'/icon.svg',shortcut:'/favicon.ico',apple:'/apple-icon.png'}};
+export const viewport:Viewport={width:'device-width',initialScale:1,themeColor:'#101d31'};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en"><body className={`${inter.variable} ${sora.variable} ${rajdhani.variable}`}><a href="#main" className="skip-link">Skip to main content</a><Header/><main id="main">{children}</main><Footer/></body></html>;}

@@ -1,0 +1,1 @@
+GoSpeed Raceway calculator listing image crops. 19 individually named JPGs extracted from the generated webpage mockup. These are small reference crops, not original full-resolution photos. UI text excluded where possible; minor image artifacts may remain.

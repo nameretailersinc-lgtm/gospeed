@@ -1,0 +1,1 @@
+export function Brand(){return <span className="race-brand"><svg viewBox="0 0 56 42" aria-hidden="true"><path d="M14 3h14l-9 10H5zm15 12h14l-9 10H20zM12 27h14l-9 10H3z" fill="currentColor"/><path d="M35 3h14l-9 10H26zm-21 12h14l-9 10H5zm19 12h14l-9 10H24z" fill="#0875ff"/></svg><span>GO<span>SPEED</span><small>R A C E W A Y</small></span></span>;}

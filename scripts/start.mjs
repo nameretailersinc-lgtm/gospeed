@@ -1,0 +1,15 @@
+import {cpSync,existsSync} from 'node:fs';
+import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
+import process from 'node:process';
+const root=process.cwd();
+const standalone=resolve(root,'.next/standalone');
+if(!existsSync(resolve(standalone,'server.js')))throw new Error('Run npm run build before starting the production server.');
+cpSync(resolve(root,'.next/static'),resolve(standalone,'.next/static'),{recursive:true});
+if(existsSync(resolve(root,'public')))cpSync(resolve(root,'public'),resolve(standalone,'public'),{recursive:true});
+const args=process.argv.slice(2);
+const value=(flag)=>{const at=args.indexOf(flag);return at===-1?undefined:args[at+1];};
+process.env.PORT=value('--port')??process.env.PORT??'3000';
+process.env.HOSTNAME=value('--hostname')??'127.0.0.1';
+process.env.NODE_ENV='production';
+await import(pathToFileURL(resolve(standalone,'server.js')).href);
