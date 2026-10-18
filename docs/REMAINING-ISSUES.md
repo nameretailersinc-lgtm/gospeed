@@ -6,7 +6,7 @@ The application is implemented locally. It has not been deployed under the user'
 
 1. The user-supplied contact address `info@nameretailer.com` is configured in `.env.local` and `.env.example`. Set `NEXT_PUBLIC_CONTACT_EMAIL=info@nameretailer.com` in the hosting build environment too. The contact page offers an email draft through the visitor's mail application and a downloadable report; it does not send email from the server. Mailbox delivery and monitoring have not been independently verified.
 2. Supply actual operator/legal identity and hosting-provider details, log retention and a rights-request process. Review privacy and terms for the intended operation and jurisdictions before public launch. Current policies describe the implemented data behavior and identify pending details; no legal sign-off is claimed.
-3. VPS target `66.29.148.167` is selected. GitHub Actions and health-checked Docker deployment files are prepared; supply the SSH account/port, verified host identity, deployment key and current server/proxy details before enabling the VPS job. Configure domain DNS and HTTPS, then verify status codes, headers and caching on the live origin. See `CI-CD.md`. No VPS changes have been made.
+3. VPS target `root@5.189.158.75:22` is selected. GitHub Actions and health-checked Docker deployment files are prepared; configure key-based SSH authentication, a verified host identity, the deployment secrets and current server/proxy details before enabling the VPS job. Configure domain DNS and HTTPS, then verify status codes, headers and caching on the live origin. See `CI-CD.md`. No VPS changes have been made.
 
 ## Verification and ongoing work
 

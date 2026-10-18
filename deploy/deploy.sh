@@ -2,7 +2,7 @@
 set -euo pipefail
 
 image="${1:?An immutable image tag is required}"
-app_port="${2:-3001}"
+app_port="${2:-3400}"
 registry_user="${3:?The registry username is required}"
 [[ "$image" =~ ^ghcr\.io/[a-z0-9._/-]+:sha-[a-f0-9]{40}$ ]] || { echo 'Invalid release image'; exit 1; }
 [[ "$app_port" =~ ^[0-9]+$ ]] && ((app_port >= 1024 && app_port <= 65535)) || { echo 'Invalid application port'; exit 1; }

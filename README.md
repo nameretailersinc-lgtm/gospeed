@@ -4,7 +4,7 @@ A Next.js App Router motorsport calculator platform: 36 functional tools, 30 foc
 
 ## CI / CD
 
-GitHub Actions validates pull requests and `main` with lint, TypeScript, unit tests, production builds and browser checks at three screen sizes. Successful `main` builds publish a tested Docker image to GitHub Container Registry. The VPS release targets `66.29.148.167`, waits for health checks and attempts rollback on failure. Configure the SSH account, verified host key and repository secrets before enabling deployment; see [CI/CD setup](docs/CI-CD.md). Deployment is initially disabled.
+GitHub Actions validates pull requests and `main` with lint, TypeScript, unit tests, production builds and browser checks at three screen sizes. Successful `main` builds publish a tested Docker image to GitHub Container Registry. The VPS release targets `root@5.189.158.75:22`, waits for health checks and attempts rollback on failure. Configure SSH key authentication, a verified host key and repository secrets before enabling deployment; see [CI/CD setup](docs/CI-CD.md). Deployment is initially disabled.
 
 ## Run locally
 
