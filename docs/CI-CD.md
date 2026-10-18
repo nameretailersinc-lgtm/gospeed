@@ -11,7 +11,8 @@ VPS target supplied by the user: `5.189.158.75`.
 1. Node 22 installs the lockfile with `npm ci`, then runs lint, TypeScript, unit tests and the production build.
 2. Three independent browser jobs test the same production-build artifact at desktop, tablet and mobile sizes. Browser reports, screenshots and traces are retained as workflow artifacts.
 3. After every check passes on `main`, the Docker image is built and smoke-tested for the homepage and icon assets. The tested image is published as `ghcr.io/nameretailersinc-lgtm/gospeed:sha-<full-commit-sha>` and `:latest` using the workflow's built-in `GITHUB_TOKEN`.
-4. VPS deployment runs only after the image job succeeds and deployment is enabled as described below. Pull requests cannot publish images or deploy.
+4. VPS deployment runs only after the image job succeeds and deployment is enabled as described below. Pull requests c
+annot publish images or deploy.
 
 The registry release is an artifact, not a claim that the website is live. This workstation has no Docker CLI; container execution is checked by the Linux workflow. GitHub Actions results must be inspected after the first push.
 
